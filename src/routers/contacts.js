@@ -1,7 +1,12 @@
-import { Router } from "express";
-//import { getAllContacts, getContactById } from "../services/contacts";
+import { Router } from 'express';
 
-import { getContactsController, getContactByIdController } from "../controllers/contacts";
+import {
+  getContactsController,
+  getContactByIdController,
+  createContactController,
+  deleteContactController,
+  patchContactController,
+} from '../controllers/contacts.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
@@ -9,24 +14,12 @@ const router = Router();
 
 router.get('/contacts', ctrlWrapper(getContactsController));
 
-    
-//     async (req, res) => {
-//     const contacts = await getAllContacts();
-
-//     res.status(200).json({
-//         data: contacts,
-//     });
-// });
-
 router.get('/contacts/:contactId', ctrlWrapper(getContactByIdController));
-    
-//     async (req, res) => {
-//     const { contactId } = req.params;
-//     const contact = await getContactById(contactId);
 
-//     res.status(200).json({
-//         data: contact,
-//     });
-// });
+router.post('/contacts', ctrlWrapper(createContactController));
+
+router.delete('/contacts/:/contactId', ctrlWrapper(deleteContactController));
+
+router.patch('/contscts/:contactId', ctrlWrapper(patchContactController));
 
 export default router;
