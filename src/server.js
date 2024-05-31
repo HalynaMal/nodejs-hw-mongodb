@@ -3,9 +3,7 @@ import cors from 'cors';
 import pino from 'pino-http';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
-
 import contactsRouter from './routers/contacts.js';
-
 import { env } from './utils/env.js';
 //import mongoose from 'mongoose';
 
@@ -25,11 +23,11 @@ export const setupServer = () => {
     }),
   );
 
-    app.use(contactsRouter);
+  app.use(contactsRouter);
 
-   app.use('*', notFoundHandler);
+  app.use('*', notFoundHandler);
 
-    app.use(errorHandler);
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
