@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import { getAllContacts, getContactById, deleteContact, updateContact } from "../services/contacts.js";
+import { getAllContacts, getContactById, deleteContact, updateContact, createContact } from "../services/contacts.js";
 import mongoose from "mongoose";
 
 export const getContactsController = async (req, res) => {
@@ -45,7 +45,7 @@ export const createContactController = async (req, res) => {
     });
 };
 
-export const patchContactController = async (req, res, next) => {
+export const patchContactController = async (req, res,next) => {
     const { contactId } = req.params;
     const result = await updateContact(contactId, req.body);
 
@@ -53,6 +53,7 @@ export const patchContactController = async (req, res, next) => {
         next(createHttpError(404, 'Contact not found'));
         return;
     }
+
     res.json({
         status: 200,
         message: 'Successfully patched a contact!',
@@ -60,14 +61,14 @@ export const patchContactController = async (req, res, next) => {
     });
 };
 
-export const deleteContactController = async (req, res) => {
+export const deleteContactController = async (req, res, next) => {
     const { contactId } = req.params;
     const contact = await deleteContact(contactId);
 
     if (!contact) {
-        next(createHttpError(404, 'Contact not found'));
-        return;
-    };
+         next(createHttpError(404, 'Contact not found'));
+         return;
+    }
     res.status(204).send();
 };
 
