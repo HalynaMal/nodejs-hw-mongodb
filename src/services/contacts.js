@@ -1,6 +1,6 @@
 import { ContactCollection } from '../db/contact.js';
 
-export const getAllContacts = async () => {
+  export const getAllContacts = async () => {
   const contacts = await ContactCollection.find();
   return contacts;
 };
@@ -17,7 +17,7 @@ export const createContact = async (payload) => {
 
 export const deleteContact = async (contactId) => {
   const contact = await ContactCollection.findOneAndDelete({
-    _id: contactId,
+    _id: contactId,                                         
   });
   return contact;
 };
@@ -34,4 +34,4 @@ export const updateContact = async (contactId, payload, options = {}) => {
     contact: rawResult,
     isNew: Boolean(rawResult?.lastErrorObject?.upserted),
   };
-};
+};                    
