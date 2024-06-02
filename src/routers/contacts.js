@@ -20,6 +20,6 @@ router.post('/contacts', ctrlWrapper(createContactController));
 
 router.delete('/contacts/:contactId', ctrlWrapper(deleteContactController));
 
-router.patch('/contscts/:contactId', ctrlWrapper(patchContactController));
+router.patch('/contacts/:contactId', ctrlWrapper(patchContactController));
 
 export default router;
