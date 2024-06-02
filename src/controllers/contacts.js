@@ -41,8 +41,14 @@ export const getContactByIdController = async (req, res, next) => {
   });
 };
 
-export const createContactController = async (req, res) => {
-  const contact = await createContact(req.body);
+export const createContactController = async (req, res, next) => {
+
+    const contact = await createContact(req.body);
+
+    if (!contact) {
+        next(createHttpError(400, "Couldn't create new contact"),);
+        return;
+    }
 
   res.status(201).json({
     status: 201,
