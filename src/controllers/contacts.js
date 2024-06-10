@@ -7,9 +7,22 @@ import {
   createContact,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 export const getContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
+
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+  });
 
   res.status(200).json({
     status: res.statusCode,
@@ -36,19 +49,18 @@ export const getContactByIdController = async (req, res, next) => {
 
   res.status(200).json({
     status: res.statusCode,
-    message: (`Successfully found contact whith id ${contactId}!`),
+    message: `Successfully found contact whith id ${contactId}!`,
     data: contact,
   });
 };
 
 export const createContactController = async (req, res, next) => {
+  const contact = await createContact(req.body);
 
-    const contact = await createContact(req.body);
-
-    if (!contact) {
-        next(createHttpError(400, "Couldn't create new contact"),);
-        return;
-    }
+  if (!contact) {
+    next(createHttpError(400, "Couldn't create new contact"));
+    return;
+  }
 
   res.status(201).json({
     status: 201,
@@ -60,6 +72,13 @@ export const createContactController = async (req, res, next) => {
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await updateContact(contactId, req.body);
+
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    res.status(404).json({
+      message: 'Not found',
+    });
+    return;
+  }
 
   if (!result) {
     next(createHttpError(404, 'Contact not found'));
@@ -77,9 +96,16 @@ export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const contact = await deleteContact(contactId);
 
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    res.status(404).json({
+      message: 'Not found',
+    });
+    return;
+  }
+
   if (!contact) {
     next(createHttpError(404, 'Contact not found'));
     return;
   }
-  res.sendStatus(204)
+  res.sendStatus(204);
 };
