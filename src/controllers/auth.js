@@ -4,8 +4,7 @@ import { THIRTY_DAYS } from '../constants/index.js';
 export const registerUserController = async (req, res) => {
     const user = await registerUser(req.body);
 
-    res.json({
-        status: 201,
+    res.status(201).json({
         massage: 'Successfully registered a user',
         data: user,
     });
