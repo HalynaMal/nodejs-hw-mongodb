@@ -15,11 +15,9 @@ export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortBy, sortOrder } = parseSortParams(req.query);
   const filter = parseFilterParams(req.query);
-
-  // user contacts only
-  if (req.user) {
-    filter.userId = req.user._id;
-  }
+  const {
+    user: { _id: userId },
+  } = req;
 
   const contacts = await getAllContacts({
     page,
@@ -37,10 +35,13 @@ export const getContactsController = async (req, res) => {
   });
 };
 
-
 export const getContactByIdController = async (req, res, next) => {
-  const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const {
+    params: { id: contactId },
+    user: { _id: userId },
+  } = req;
+
+  const contact = await getContactById(contactId, userId);
 
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     res.status(404).json({
@@ -62,7 +63,12 @@ export const getContactByIdController = async (req, res, next) => {
 };
 
 export const createContactController = async (req, res, next) => {
-  const contact = await createContact(req.body, req.user._id);
+  const {
+    body,
+    user: { _id: userId },
+  } = req;
+
+  const contact = await createContact(body, userId);
 
   if (!contact) {
     next(createHttpError(400, "Couldn't create new contact"));
@@ -77,8 +83,13 @@ export const createContactController = async (req, res, next) => {
 };
 
 export const patchContactController = async (req, res, next) => {
-  const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body);
+  const {
+    body,
+    params: { id: contactId },
+    user: { _id: userId },
+  } = req;
+
+  const result = await updateContact(contactId, userId, body);
 
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     res.status(404).json({
@@ -92,16 +103,20 @@ export const patchContactController = async (req, res, next) => {
     return;
   }
 
-  res.json({
-    status: 200,
+  res.status(200).json({
+    status: res.statusCode,
     message: 'Successfully patched a contact!',
     data: result.contact,
   });
 };
 
 export const deleteContactController = async (req, res, next) => {
-  const { contactId } = req.params;
-  const contact = await deleteContact(contactId);
+  const {
+    params: { id: contactId },
+    user: { _id: userId },
+  } = req;
+
+  const contact = await deleteContact(contactId, userId);
 
   if (!mongoose.Types.ObjectId.isValid(contactId)) {
     res.status(404).json({
