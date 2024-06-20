@@ -35,11 +35,8 @@ export const getContactsController = async (req, res) => {
 };
 
 export const getContactByIdController = async (req, res, next) => {
-  const {
-    params: { id: contactId },
-    user: { _id: userId },
-  } = req;
-
+  const { contactId } = req.params;
+  const userId = req.user._id;
   const contact = await getContactById(contactId, userId);
 
   if (!contact) {
@@ -49,7 +46,7 @@ export const getContactByIdController = async (req, res, next) => {
 
   res.json({
     status: 200,
-    message: `Successfully found contact whith id ${contactId}!`,
+    message: `Successfully found contact with id ${contactId}!`,
     data: contact,
   });
 };
@@ -70,14 +67,12 @@ export const createContactController = async (req, res, next) => {
 };
 
 export const patchContactController = async (req, res, next) => {
-  const {
-    body,
-    params: { id: contactId },
-    user: { _id: userId },
-  } = req;
+  const { contactId } = req.params;
+  const photo = req.file;
+  const userId = req.user._id;
+  const result = await updateContact(contactId, userId, req.body);
 
-  const result = await updateContact(contactId, userId, body);
-
+  
   if (!result) {
     next(createHttpError(404, 'Contact not found'));
     return;
@@ -91,11 +86,8 @@ export const patchContactController = async (req, res, next) => {
 };
 
 export const deleteContactController = async (req, res, next) => {
-  const {
-    params: { id: contactId },
-    user: { _id: userId },
-  } = req;
-
+  const { contactId } = req.params;
+  const userId = req.user._id;
   const contact = await deleteContact(contactId, userId);
 
   if (!contact) {
