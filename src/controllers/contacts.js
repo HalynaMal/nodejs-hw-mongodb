@@ -42,6 +42,13 @@ export const getContactByIdController = async (req, res, next) => {
   const userId = req.user._id;
   const contact = await getContactById(contactId, userId);
 
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    res.status(404).json({
+      message: 'Not found',
+    });
+    return;
+  }
+
   if (!contact) {
     next(createHttpError(404, `Contact not found`));
     return;
@@ -79,13 +86,22 @@ export const patchContactController = async (req, res, next) => {
     if (env('ENABLE_CLOUDINARY') === 'true') {
       photoUrl = await saveFileToCloudinary(photo);
     } else {
-    photoUrl = await saveFileToUploadDir(photo);
-  }
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
+  const result = await updateContact(contactId, userId, {
+    ...req.body,
+    photo: photoUrl,
+  });
 
-  const result = await updateContact(contactId, userId, {...req.body, photo: photoUrl,});
-  
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    res.status(404).json({
+      message: 'Not found',
+    });
+    return;
+  }
+
   if (!result) {
     next(createHttpError(404, 'Contact not found'));
     return;
@@ -103,10 +119,17 @@ export const deleteContactController = async (req, res, next) => {
   const userId = req.user._id;
   const contact = await deleteContact(contactId, userId);
 
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    res.status(404).json({
+      message: 'Not found',
+    });
+    return;
+  }
+
   if (!contact) {
     next(createHttpError(404, 'Contact not found'));
     return;
   }
-  
+
   res.sendStatus(204);
 };

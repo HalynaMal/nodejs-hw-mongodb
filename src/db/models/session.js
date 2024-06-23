@@ -5,7 +5,7 @@ const sessionSchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'user',
+      ref: 'users',
     },
 
     accessToken: { type: String, required: true },

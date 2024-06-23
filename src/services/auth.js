@@ -31,6 +31,18 @@ export const registerUser = async (payload) => {
   });
 };
 
+const createSession = () => {
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+  };
+};
+
 export const loginUser = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
   if (!user) {
@@ -44,32 +56,16 @@ export const loginUser = async (payload) => {
 
   await SessionsCollection.deleteOne({ userId: user._id });
 
-  const accessToken = randomBytes(30).toString('base64');
-  const refreshToken = randomBytes(30).toString('base64');
+  const newSession = createSession();
 
   return await SessionsCollection.create({
     userId: user._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+    ...newSession,
   });
 };
 
 export const logoutUser = async (sessionId) => {
   await SessionsCollection.deleteOne({ _id: sessionId });
-};
-
-const createSession = () => {
-  const accessToken = randomBytes(30).toString('base64');
-  const refreshToken = randomBytes(30).toString('base64');
-
-  return {
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
-  };
 };
 
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
@@ -89,12 +85,9 @@ export const refreshUsersSession = async ({ sessionId, refreshToken }) => {
     throw createHttpError(401, 'Session token expired');
   }
 
-  const newSession = createSession();
+  await SessionsCollection.deleteOne({ userId: session.userId });
 
-  await SessionsCollection.deleteOne({
-    _id: sessionId,
-    refreshToken,
-  });
+  const newSession = createSession();
 
   return await SessionsCollection.create({
     userId: session.userId,
@@ -113,7 +106,7 @@ export const requestResetToken = async (email) => {
       sub: user._id,
       email,
     },
-    env('JWT_SECRET'),
+    env(SMTP.JWT_SECRET),
     {
       expiresIn: '5m',
     },
@@ -133,18 +126,18 @@ export const requestResetToken = async (email) => {
     name: user.name,
     link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
   });
+
   try {
     await sendEmail({
       from: env(SMTP.SMTP_FROM),
       to: email,
-      subject: 'Reset yor password',
-      html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`,
+      subject: 'Reset your password',
+      html,
     });
   } catch (err) {
-    throw createHttpError(500, 'Failed to send the email, please try again later.', {
-        detail: err.message,
-        cause: err,
-      },
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
     );
   }
 };
@@ -153,15 +146,13 @@ export const resetPassword = async (payload) => {
   let entries;
 
   try {
-    entries = jwt.verify(payload.token, env('JWT_SECRET'));
+    entries = jwt.verify(payload.token, env(SMTP.JWT_SECRET));
   } catch (err) {
     if (err instanceof Error)
-      throw createHttpError(401, 'Token is expired or invalid.', {
-        detail: err.message,
-        cause: err,
-      });
+      throw createHttpError(401, 'Token is expired or invalid.',);
     throw err;
   }
+  
   const user = await UsersCollection.findOne({
     email: entries.email,
     _id: entries.sub,

@@ -1,4 +1,3 @@
-//import { required, string } from "joi";
 import { model, Schema } from "mongoose";
 
 const userSchema = new Schema(
@@ -6,6 +5,8 @@ const userSchema = new Schema(
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
+        createdAt: { type: Date },
+        updatedAt: { type: Date },
     },
     { timestamps: true, versionKey: false },
 );
@@ -16,4 +17,4 @@ userSchema.methods.toJSON = function () {
     return obj;
 };
 
-export const UsersCollection = model('user', userSchema);
+export const UsersCollection = model('users', userSchema);
