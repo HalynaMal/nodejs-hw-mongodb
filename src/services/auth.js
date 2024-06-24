@@ -7,12 +7,11 @@ import {
   FIFTEEN_MINUTES,
   TEMPLATES_DIR,
   THIRTY_DAYS,
-  SMTP,
+  SMTP
 } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/session.js';
 
 import jwt from 'jsonwebtoken';
-import { SMTP } from '../constants/index.js';
 import { env } from '../utils/env.js';
 import { sendEmail } from '../utils/sendMail.js';
 
