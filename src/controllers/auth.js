@@ -3,9 +3,10 @@ import {
   loginUser,
   logoutUser,
   refreshUsersSession,
-  requestResetToken,
+  sendResetToken,
   resetPassword,
 } from '../services/auth.js';
+
 import { THIRTY_DAYS } from '../constants/index.js';
 
 export const registerUserController = async (req, res) => {
@@ -31,15 +32,7 @@ const setupSession = (res, session) => {
 
 export const loginUserController = async (req, res) => {
   const session = await loginUser(req.body);
-
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAYS),
-  });
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAYS),
-  });
+  setupSession(res, session);
 
   res.json({
     status: 200,
@@ -61,26 +54,8 @@ export const logoutUserController = async (req, res) => {
   res.status(204).send();
 };
 
-
-export const refreshUserSessionController = async (req, res) => {
-  const session = await refreshUsersSession({
-    sessionId: req.cookies.sessionId,
-    refreshToken: req.cookies.refreshToken,
-  });
-
-  setupSession(res, session);
-
-  res.json({
-    status: 200,
-    message: 'Successfully refreshed a session!',
-    data: {
-      accessToken: session.accessToken,
-    },
-  });
-};
-
 export const sendResetEmailController = async (req, res) => {
-  await requestResetToken(req.body.email);
+  await sendResetToken(req.body.email);
   res.json({
     status: 200,
     message: 'Reset password email was successfully sent!',
@@ -90,7 +65,7 @@ export const sendResetEmailController = async (req, res) => {
 
 export const resetPasswordController = async (req, res) => {
   await resetPassword(req.body);
-  res.json({
+  res.status(200).json({
     status: 200,
     message: 'Password was successfully reset!',
     data: {},
