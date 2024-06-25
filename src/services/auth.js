@@ -103,7 +103,7 @@ export const sendResetToken = async (email) => {
       sub: user._id,
       email,
     },
-    env(JWT_SECRET),
+    env('JWT_SECRET'),
     {
       expiresIn: '5m',
     },
