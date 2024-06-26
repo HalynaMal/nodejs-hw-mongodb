@@ -18,20 +18,23 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
+      required: false,
     },
     isFavourite: {
       type: Boolean,
+      required: true,
       default: false,
     },
     contactType: {
       type: String,
-      required: false,
+      required: true,
       enum: ['work', 'home', 'personal'],
       default: 'personal',
     },
     photo: {type: String},
   },
-  { timestamps: true, versionKey: false},
+
+  { timestamps: true, }
 );
 
 export const ContactCollection = model('contacts', contactSchema);
