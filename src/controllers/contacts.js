@@ -9,7 +9,6 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
-//import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 //import { env } from '../utils/env.js';
 
@@ -21,7 +20,7 @@ export const getContactsController = async (req, res) => {
     user: { _id: userId },
   } = req;
 
-  const contacts = await getAllContacts({
+    const contacts = await getAllContacts({
     page,
     perPage,
     sortBy,
