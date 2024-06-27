@@ -1,4 +1,3 @@
-//import { required, string } from "joi";
 import { model, Schema } from "mongoose";
 
 const userSchema = new Schema(
@@ -16,4 +15,4 @@ userSchema.methods.toJSON = function () {
     return obj;
 };
 
-export const UsersCollection = model('user', userSchema);
+export const UsersCollection = model('users', userSchema);
