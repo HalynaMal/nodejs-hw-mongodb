@@ -31,10 +31,10 @@ const contactSchema = new Schema(
       enum: ['work', 'home', 'personal'],
       default: 'personal',
     },
-    photo: {type: String},
+    photo: { type: String },
   },
 
-  { timestamps: true, }
+  { timestamps: true },
 );
 
 export const ContactCollection = model('contacts', contactSchema);

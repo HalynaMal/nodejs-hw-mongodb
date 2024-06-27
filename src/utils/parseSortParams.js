@@ -14,7 +14,7 @@ const parseSortBy = (sortBy) => {
     'email',
     'isFavourite',
     'contactType',
-    ];
+  ];
     
     if (keysOfContact.includes(sortBy)) {
         return sortBy;
