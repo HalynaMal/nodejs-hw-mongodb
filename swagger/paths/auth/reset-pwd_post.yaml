@@ -20,7 +20,7 @@ requestBody:
           token:
             description: Token
             type: string
-            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjU1ODdmZThjYjYwMmI2M2VkMjI4MTMiLCJlbWFpbCI6ImFsY3JhbmVAb3V0bG9vay5jb20iLCJpYXQiOjE3MTc3MzU4MzUsImV4cCI6MTcxNzczNjEzNX0.PjfeyPrV4W7S9t0b0s4MJuBsb8k002NDygNDY88koDY'
+            example: 'eyJhbGciOiJIUzI6IkpXVCJ9.eyJzdWIiOiI2NjU1ODdmZThjYjYwMmI2M2VkMjI4M6MTcxNzczNjEzNX0.PjfeyPrV4W7S9t0b0s4MJgNDY88koDY'
 responses:
   '200':
     description: Password has been successfully reset!
