@@ -1,0 +1,29 @@
+type: object
+required:
+  - name
+  - phoneNumber
+  - email
+  - isFavourite
+  - contactType
+properties:
+  name:
+    description: "Contact's name"
+    type: string
+    example: 'Donald Tramp'
+  phoneNumber:
+    description: "Contact's phone number"
+    type: string
+    example: '+380112345678'
+  email:
+    description: "Contact's email"
+    type: string
+    example: 'tramp@usa.com'
+  isFavourite:
+    description: 'True if contact is favourite'
+    type: boolean
+    example: true
+  contactType:
+    description: "Contact's type"
+    type: string
+    enum: ['work', 'home', 'personal']
+    example: 'work'
