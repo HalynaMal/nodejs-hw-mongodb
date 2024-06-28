@@ -9,15 +9,15 @@ properties:
   name:
     description: "Contact's name"
     type: string
-    example: 'Mel Gibson'
+    example: 'Donald Tramp'
   phoneNumber:
     description: "Contact's phone number"
     type: string
-    example: '+3801111111'
+    example: '+380112345678'
   email:
     description: "Contact's email"
     type: string
-    example: 'MEEELLL@ui.com'
+    example: 'tramp@usa.com'
   isFavourite:
     description: 'True if contact is favourite'
     type: boolean
